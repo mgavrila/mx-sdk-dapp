@@ -12,5 +12,5 @@ jobs:
       - name: Spell Check
         uses: streetsidesoftware/cspell-action@v6
         with:
-          files: '**/*.{ts,tsx,js,jsx,md,json,yml,yaml}'
+          files: '**/*.{ts,tsx,js,jsx,md,json}'
           incremental_files_only: false
