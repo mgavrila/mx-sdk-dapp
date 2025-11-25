@@ -1,7 +1,6 @@
 name: Spell Check
 
-on:
-  workflow_dispatch:
+on: pull_request
 
 jobs:
   spell-check:
