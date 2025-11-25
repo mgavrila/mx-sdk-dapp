@@ -1,31 +1,22 @@
 name: Spell Check
 
-on: pull_request
+on:
+  pull_request
 
 jobs:
   spell-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          node-version: '20'
+          python-version: '3.13'
 
+      - name: Install codespell
+        run: pip install codespell
 
-      - name: Install cspell
-        run: npm install -g cspell
-
-      - name: Set up reviewdog
-        uses: reviewdog/action-setup@v1
-
-      - name: Run cspell and save output
-        run: |
-          cspell --no-progress --no-summary --show-suggestions --gitignore --relative "src/**/*.{js,ts,md}" | tee cspell-issues.txt
-
-      - name: Run reviewdog on cspell output (PR only)
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cat cspell-issues.txt | reviewdog -efm="%f:%l:%c: %m" -name="cspell" -reporter=github-pr-review -filter-mode=diff_context -fail-on-error=false
+      - name: Run spell check
+        run: codespell docs/ --config .codespell
