@@ -1,6 +1,7 @@
 name: Spell Check
 
-on: pull_request
+on:
+  pull_request
 
 jobs:
   spell-check:
@@ -9,8 +10,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Spell Check
-        uses: streetsidesoftware/cspell-action@v6
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          files: '**/*.{ts,tsx,js,jsx,md,json,yml,yaml}'
-          incremental_files_only: false
+          python-version: '3.13'
+
+      - name: Install codespell
+        run: pip install codespell
+
+      - name: Run spell check
+        run: codespell src/ --config .codespell

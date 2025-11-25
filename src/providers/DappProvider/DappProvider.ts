@@ -33,6 +33,7 @@ export class DappProvider {
   }
 
   isInitialized(): boolean {
+    // Directly return the result of the provider's isInitialized method programaticaly test
     return this.provider.isInitialized();
   }
 
