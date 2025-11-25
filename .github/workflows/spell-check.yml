@@ -8,16 +8,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get list of modified files
-        id: files
-        run: |
-          git fetch origin/main
-          MODIFIED=$(git diff --name-only origin/main...HEAD | grep -E '\.js$|\.ts$|\.md$' || true)
-          echo "files=$MODIFIED" >> $GITHUB_OUTPUT
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Run spell check on modified files
-        if: steps.files.outputs.files != ''
+
+      - name: Install cspell
+        run: npm install -g cspell
+
+      - name: Set up reviewdog
+        uses: reviewdog/action-setup@v1
+
+      - name: Run cspell with reviewdog (PR only)
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          for file in ${{ steps.files.outputs.files }}; do
-            npx cspell "$file"
-          done
+          cspell --no-progress --no-summary --show-suggestions --gitignore --relative --format=unix "src/**/*.{js,ts,md}" | \
+            ./bin/reviewdog -efm="%f:%l:%c: %m" -name="cspell" -reporter=github-pr-review -filter-mode=diff_context -fail-on-error=false
