@@ -19,4 +19,4 @@ jobs:
         run: pip install codespell
 
       - name: Run spell check
-        run: codespell docs/ --config .codespell
+        run: codespell src/ --config .codespell
